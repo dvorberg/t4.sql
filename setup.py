@@ -23,7 +23,7 @@ setup(name="t4.sql",
       
       license="GPL",
       
-      packages=find_packages(exclude=["ez_setup"]),
+      packages=find_packages(),
       namespace_packages=["t4"],
       include_package_data=True,
       zip_safe=False,
