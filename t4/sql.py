@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 ##  This file is part of the t4 Python module collection. 
 ##
-##  Copyright 2002–2015 by Diedrich Vorberg <diedrich@tux4web.de>
+##  Copyright 2002–2018 by Diedrich Vorberg <diedrich@tux4web.de>
 ##
 ##  All Rights Reserved
 ##
@@ -58,9 +58,6 @@ __author__ = "Diedrich Vorberg <diedrich@tux4web.de>"
 import json, decimal
 from string import *
 from types import *
-
-from t4.debug import sqllog
-from t4.web.typography import normalize_whitespace
 
 NULL = "NULL" 
 
@@ -561,7 +558,7 @@ class expression:
             ident = ""
         else:
             ident = " named %s" % repr(self._identifyer)
-        expr = normalize_whitespace(join(map(str, self._parts), " "))
+        expr = join(map(str, self._parts), " ")
         return "<expression %s%s>" % ( expr, ident, )
         
     def __hash__(self):
@@ -901,36 +898,6 @@ class nil(expression, clause, statement):
     def __sql__(self, runner):
         return ""
     
-class cursor_wrapper:
-    """
-    The cursor wrapper takes a regular database cursor and 'wraps' it
-    up so that its execute() method understands sql.* objects as
-    parameters. 
-    """
-    def __init__(self, ds, cursor):
-        self._ds = ds
-        self._cursor = cursor
-
-    def __getattr__(self, name):
-        return getattr(self._cursor, name)
-
-    def execute(self, command, params=None):
-        if type(command) == UnicodeType:
-            raise TypeError("Database queries must be strings, not unicode")
-
-        if isinstance(command, statement):
-            runner = sql(self._ds)
-            command = runner(command)
-            params = runner.params
-
-        if params is None:
-            print >> sqllog, self._cursor, command
-            self._cursor.execute(command)
-        else:
-            print >> sqllog, self._cursor, command, " || ", repr(params)
-            self._cursor.execute(command, tuple(params))
-
-
 def join_tokens(lst, sep):
     ret = []
     for a in lst:
