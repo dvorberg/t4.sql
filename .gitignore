@@ -1,2 +1,4 @@
 *~
 *.pyc
+dist/
+t4.sql.egg-info/
